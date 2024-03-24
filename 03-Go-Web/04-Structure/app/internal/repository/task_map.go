@@ -1,38 +1,50 @@
-package internal
+package repository
 
-import "errors"
+import "go-web/structure/app/internal"
 
-// Task is a struct that represents a task
-type Task struct {
-	// ID is the unique identifier of the task
-	ID int
-	// Title is the title of the task
-	Title string
-	// Description is the description of the task
-	Description string
-	// Done is a flag that indicates if the task is done
-	Done bool
+// NewTaskMap creates a new TaskMap
+func NewTaskMap(db map[int]internal.Task, lastID int) *TaskMap {
+	// default values
+	if db == nil {
+		db = make(map[int]internal.Task)
+	}
+
+	// create the task map
+	return &TaskMap{
+		db:     db,
+		lastID: lastID,
+	}
 }
 
-var (
-	// ErrTaskNotFound is an error that is used when the task is not found
-	ErrTaskNotFound = errors.New("task not found")
-	// ErrTaskDuplicate is an error that is used when the task already exists
-	ErrTaskDuplicated = errors.New("task already exists")
-	// ErrTaskInvalidField is an error that is used when the task is invalid
-	ErrTaskInvalidField = errors.New("task is invalid")
-	// ErrTaskInternal is an error that is used when the task can't be saved
-	ErrTaskInternal = errors.New("task can't be processed")
-)
+// TaskMap is an implementation of the TaskRepository interface
+// based on a map
+type TaskMap struct {
+	// db is a map that stores the tasks
+	// - key: id
+	// - value: internal.Task (structured data)
+	db map[int]internal.Task
 
-// TaskRepository is an interface that represents a task repository
-type TaskRepository interface {
-	// Save saves a task
-	Save(task *Task) (err error)
+	// lastID is the last identifier used
+	lastID int
 }
 
-// TaskService is an interface that represents a task service
-type TaskService interface {
-	// Save saves a task
-	Save(task *Task) (err error)
+func (t *TaskMap) Save(task *internal.Task) (err error) {
+	// check if the task already exists
+	for _, t := range (*t).db {
+		if t.Title == (*task).Title {
+			err = internal.ErrTaskDuplicated
+			return
+		}
+	}
+
+	// increment lastID
+	(*t).lastID++
+
+	// set the id of the task
+	(*task).ID = (*t).lastID
+
+	// save the task
+	(*t).db[(*task).ID] = *task
+
+	return
 }
