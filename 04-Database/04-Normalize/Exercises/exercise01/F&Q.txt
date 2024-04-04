@@ -1,0 +1,22 @@
+-> Describir con sus palabras cada paso de la descomposición y aplicación de 
+las reglas para visualizar el planteo realizado.
+
+1. Primera Forma Normal (1NF)
+    - Todos los campos parecen ser atómicos y no hay valores repetidos en ninguna celda, por lo que
+    ya cumple con la 1NF
+
+2. Segunda Forma Normal (2NF)
+    - Parece que 'id_factura' podría ser la clave primaria, ya que identifica de manera única cada factura.
+    - Los campos 'fecha_factura', 'forma_pago', 'iva', 'nombre_cliente', 'apellido_cliente, 'direccion_cliente'
+    parecen depender completamente de 'id_factura', ya que son características de cada factura individual.
+    - Sin embargo, 'cantidad', 'importe' y 'descripcion_articulo' pueden depender tanto de 'id_factura'
+    como de algún identificador de artículo
+    - Por lo tanto, para cumplir con la 2NF, se puede dividir la tabla en dos:
+        * Tabla Facturas: id_factura (clave primaria), fecha_factura, forma_pago, iva, nombre_cliente,
+        apellido_cliente, direccion_cliente
+        * Tabla Detalles_Facturas: id_factura (Clave foránea), cantidad, importe, descripcion_articulo.
+
+3. Tercera Forma Normal (3NF)
+    - En este punto, ya no existen dependencias transitivas, por lo que ya cumple con la 3NF
+
+3. 
